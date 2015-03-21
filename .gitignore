@@ -4,3 +4,10 @@ local.properties
 Thumbs.db
 .project
 .settings/
+*.swp
+*.swo
+.*.swn
+/out
+/.idea/
+*.iml
+simplelogger-*.log.lck
