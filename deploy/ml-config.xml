@@ -1,0 +1,576 @@
+<configuration>
+<!--
+  Only enable the task server section if you need to.
+  <task-server xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://marklogic.com/xdmp/group" xsi:schemaLocation="http://marklogic.com/xdmp/group group.xsd">
+    <threads>16</threads>
+    <debug-threads>16</debug-threads>
+    <max-time-limit>3600</max-time-limit>
+    <default-time-limit>600</default-time-limit>
+    <queue-size>100000</queue-size>
+    <pre-commit-trigger-depth>1000</pre-commit-trigger-depth>
+    <post-commit-trigger-depth>1000</post-commit-trigger-depth>
+    <pre-commit-trigger-limit>10000</pre-commit-trigger-limit>
+    <log-errors>true</log-errors>
+    <debug-allow>true</debug-allow>
+    <profile-allow>true</profile-allow>
+    <scheduled-tasks/>
+  </task-server>
+-->
+  <http-servers xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://marklogic.com/xdmp/group" xsi:schemaLocation="http://marklogic.com/xdmp/group group.xsd">
+    <!--Default Application Server-->
+    <http-server>
+      <http-server-name>@ml.app-name</http-server-name>
+      <port>@ml.app-port</port>
+      <database name="@ml.content-db"/>
+      <modules />
+      <root>@ml.modules-root</root>
+      <authentication>@ml.authentication-method</authentication>
+      <default-user name="@ml.default-user"/>
+      <url-rewriter>@ml.url-rewriter</url-rewriter>
+      <error-handler>@ml.error-handler</error-handler>
+      <rewrite-resolves-globally>@ml.rewrite-resolves-globally</rewrite-resolves-globally>
+      <!-- <ssl-certificate-template>@ml.ssl-certificate-template</ssl-certificate-template> -->
+    </http-server>
+    <!-- DAV access to DB -->
+    <http-server>
+      <http-server-name>TaxesTime-DAV</http-server-name>
+      <port>8103</port>
+      <webDAV>true</webDAV>
+      <execute>false</execute>
+      <database name="@ml.content-db"/>
+      <authentication>@ml.authentication-method</authentication>
+      <default-user name="@ml.default-user"/>
+      <compute-content-length>false</compute-content-length>
+      <!-- <ssl-certificate-template>@ml.ssl-certificate-template</ssl-certificate-template> -->
+  </http-server>
+  <http-server>
+      <http-server-name>TaxesTime-Test-DAV</http-server-name>
+      <port>8217</port>
+      <webDAV>true</webDAV>
+      <execute>false</execute>
+      <database name="@ml.test-content-db"/>
+      <authentication>@ml.authentication-method</authentication>
+      <default-user name="@ml.default-user"/>
+      <compute-content-length>false</compute-content-length>
+      <!-- <ssl-certificate-template>@ml.ssl-certificate-template</ssl-certificate-template> -->
+  </http-server>
+
+    @ml.test-appserver
+
+  <http-server>
+      <http-server-name>TaxesTime-Search</http-server-name>
+      <port>8004</port>
+      <database name="@ml.content-db"/>
+      <modules />
+      <root>/app/search</root>
+      <authentication>@ml.authentication-method</authentication>
+      <default-user name="@ml.default-user"/>
+      <url-rewriter>rewrite.xqy</url-rewriter>
+      <error-handler>error.xqy</error-handler>
+      <rewrite-resolves-globally>@ml.rewrite-resolves-globally</rewrite-resolves-globally>
+      <!-- <ssl-certificate-template>@ml.ssl-certificate-template</ssl-certificate-template> -->
+  </http-server>
+
+  </http-servers>
+  <xdbc-servers xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://marklogic.com/xdmp/group" xsi:schemaLocation="http://marklogic.com/xdmp/group group.xsd">
+    @ml.xdbc-server
+  </xdbc-servers>
+  <odbc-servers xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://marklogic.com/xdmp/group" xsi:schemaLocation="http://marklogic.com/xdmp/group group.xsd">
+    @ml.odbc-server
+  </odbc-servers>
+  <!--Assignments-->
+  <assignments xmlns="http://marklogic.com/xdmp/assignments" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://marklogic.com/xdmp/assignments assignments.xsd">
+    <assignment>
+      <forest-name>@ml.content-db</forest-name>
+      @ml.forest-data-dir-xml
+    </assignment>
+    @ml.test-content-db-assignment
+    @ml.test-modules-db-assignment
+    <assignment>
+      <forest-name>@ml.modules-db</forest-name>
+    </assignment>
+    @ml.schemas-assignment
+    @ml.triggers-assignment
+  </assignments>
+  <!--
+    =========================================================
+    Databases that are created as part of the application
+    Add any database configuration or indexes here
+      =========================================================
+  -->
+  <databases xmlns="http://marklogic.com/xdmp/database" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://marklogic.com/xdmp/database database.xsd">
+
+    <!-- Taxes Time DB -->
+      <database>
+          <database-name>TaxesDB</database-name>
+          <forests-per-host>@ml.content-forests-per-host</forests-per-host>
+          @ml.schemas-mapping
+          @ml.triggers-mapping
+          <forests>
+              <forest-id name="@ml.content-db"/>
+              @ml.forest-data-dir-xml
+          </forests>
+          <uri-lexicon>true</uri-lexicon>
+          <collection-lexicon>false</collection-lexicon>
+          <directory-creation>automatic</directory-creation>
+          <maintain-last-modified>true</maintain-last-modified>
+          <stemmed-searches>decompounding</stemmed-searches>
+          <word-positions>true</word-positions>
+          <element-word-positions>true</element-word-positions>
+          <element-value-positions>true</element-value-positions>
+          <field-value-searches>true</field-value-searches>
+          <field-value-positions>true</field-value-positions>
+          <three-character-searches>true</three-character-searches>
+          <three-character-word-positions>true</three-character-word-positions>
+          <inherit-permissions>true</inherit-permissions>
+          <inherit-collections>true</inherit-collections>
+          <inherit-quality>true</inherit-quality>
+          <preload-mapped-data>true</preload-mapped-data>
+          <expunge-locks>automatic</expunge-locks>
+          <merge-max-size>0</merge-max-size>
+          <database-backups>
+              <database-backup>
+                  <backup-type>weekly</backup-type>
+                  <backup-period>2</backup-period>
+                  <backup-directory>/app/backup/weekly</backup-directory>
+                  <backup-days>
+                      <backup-day>monday</backup-day>
+                      <backup-day>wednesday</backup-day>
+                      <backup-day>friday</backup-day>
+                      <backup-day>sunday</backup-day>
+                  </backup-days>
+                  <backup-start-time>04:45:00</backup-start-time>
+                  <max-backups>10</max-backups>
+                  <backup-schemas-database>false</backup-schemas-database>
+                  <backup-security-database>false</backup-security-database>
+                  <backup-triggers-database>false</backup-triggers-database>
+                  <include-replicas>true</include-replicas>
+                  <journal-archiving>false</journal-archiving>
+                  <journal-archive-path/>
+                  <journal-archive-lag-limit>15</journal-archive-lag-limit>
+              </database-backup>
+              <database-backup>
+                  <backup-type>hourly</backup-type>
+                  <backup-period>1</backup-period>
+                  <backup-directory>/app/backup/</backup-directory>
+                  <backup-start-time>00:30:00</backup-start-time>
+                  <max-backups>10</max-backups>
+                  <backup-schemas-database>false</backup-schemas-database>
+                  <backup-security-database>false</backup-security-database>
+                  <backup-triggers-database>false</backup-triggers-database>
+                  <include-replicas>true</include-replicas>
+                  <journal-archiving>false</journal-archiving>
+                  <journal-archive-path/>
+                  <journal-archive-lag-limit>15</journal-archive-lag-limit>
+              </database-backup>
+          </database-backups>
+          <element-word-query-throughs>
+              <element-word-query-through>
+                  <namespace-uri>
+                      http://schemas.microsoft.com/office/word/2003/wordml
+                  </namespace-uri>
+                  <localname>p</localname>
+              </element-word-query-through>
+              <element-word-query-through>
+                  <namespace-uri>
+                      http://schemas.openxmlformats.org/wordprocessingml/2006/main
+                  </namespace-uri>
+                  <localname>p</localname>
+              </element-word-query-through>
+          </element-word-query-throughs>
+          <phrase-throughs>
+              <phrase-through>
+                  <namespace-uri>http://www.w3.org/1999/xhtml</namespace-uri>
+                  <localname>
+                      a abbr acronym b big br center cite code dfn em font i kbd q samp small span strong sub sup tt var
+                  </localname>
+              </phrase-through>
+              <phrase-through>
+                  <namespace-uri>
+                      http://schemas.microsoft.com/office/word/2003/wordml
+                  </namespace-uri>
+                  <localname>
+                      br cr fldChar fldData fldSimple hlink noBreakHyphen permEnd permStart pgNum proofErr r softHyphen sym t tab
+                  </localname>
+              </phrase-through>
+              <phrase-through>
+                  <namespace-uri>
+                      http://schemas.microsoft.com/office/word/2003/auxHint
+                  </namespace-uri>
+                  <localname>t</localname>
+              </phrase-through>
+              <phrase-through>
+                  <namespace-uri>
+                      http://schemas.openxmlformats.org/wordprocessingml/2006/main
+                  </namespace-uri>
+                  <localname>
+                      r t endnoteReference footnoteReference customXml hyperlink sdt sdtContent commentRangeEnd commentRangeStart bookmarkStart bookmarkEnd fldSimple instrText smartTag ins proofErr
+                  </localname>
+              </phrase-through>
+              <phrase-through>
+                  <namespace-uri>http://marklogic.com/entity</namespace-uri>
+                  <localname>
+                      person organization location gpe facility religion nationality credit-card-number email coordinate money percent id phone-number url utm date time
+                  </localname>
+              </phrase-through>
+          </phrase-throughs>
+          <phrase-arounds>
+              <phrase-around>
+                  <namespace-uri>
+                      http://schemas.microsoft.com/office/word/2003/wordml
+                  </namespace-uri>
+                  <localname>
+                      delInstrText delText endnote footnote instrText pict rPr
+                  </localname>
+              </phrase-around>
+              <phrase-around>
+                  <namespace-uri>
+                      http://schemas.openxmlformats.org/wordprocessingml/2006/main
+                  </namespace-uri>
+                  <localname>pPr rPr customXmlPr sdtPr commentReference del</localname>
+              </phrase-around>
+          </phrase-arounds>
+
+          <fields>
+              <field>
+                  <field-name>Receipt</field-name>
+                  <include-root>false</include-root>
+                  <included-elements/>
+                  <excluded-elements/>
+                  <stemmed-searches>decompounding</stemmed-searches>
+                  <word-searches>true</word-searches>
+                  <fast-phrase-searches>true</fast-phrase-searches>
+              </field>
+          </fields>
+          <word-query>
+              <fast-phrase-searches>true</fast-phrase-searches>
+              <included-elements/>
+              <fast-case-sensitive-searches>true</fast-case-sensitive-searches>
+              <word-searches>true</word-searches>
+              <excluded-elements/>
+              <include-root>true</include-root>
+              <stemmed-searches>decompounding</stemmed-searches>
+              <word-lexicons/>
+          </word-query>
+          <range-element-indexes>
+              <range-element-index>
+                  <scalar-type>dateTime</scalar-type>
+                  <namespace-uri>http://marklogic.com/xdmp/dls</namespace-uri>
+                  <localname>created replaced</localname>
+                  <collation/>
+                  <range-value-positions>false</range-value-positions>
+                  <invalid-values>ignore</invalid-values>
+              </range-element-index>
+              <range-element-index>
+                  <scalar-type>unsignedInt</scalar-type>
+                  <namespace-uri>http://marklogic.com/xdmp/dls</namespace-uri>
+                  <localname>version-id</localname>
+                  <collation/>
+                  <range-value-positions>false</range-value-positions>
+                  <invalid-values>reject</invalid-values>
+              </range-element-index>
+              <range-element-index>
+                  <scalar-type>dateTime</scalar-type>
+                  <namespace-uri>http://www.vlad.org/2010/Receipts/OrderEmail</namespace-uri>
+                  <localname>Date</localname>
+                  <collation/>
+                  <range-value-positions>true</range-value-positions>
+                  <invalid-values>reject</invalid-values>
+              </range-element-index>
+              <range-element-index>
+                  <scalar-type>string</scalar-type>
+                  <namespace-uri>http://www.vlad.org/2010/Receipts/OrderEmail</namespace-uri>
+                  <localname>Processed</localname>
+                  <collation>http://marklogic.com/collation/</collation>
+                  <range-value-positions>false</range-value-positions>
+                  <invalid-values>reject</invalid-values>
+              </range-element-index>
+              <range-element-index>
+                  <scalar-type>string</scalar-type>
+                  <namespace-uri>http://www.vlad.org/2010/Receipts/Expense</namespace-uri>
+                  <localname>ExpenseId</localname>
+                  <collation>http://marklogic.com/collation/</collation>
+                  <range-value-positions>false</range-value-positions>
+                  <invalid-values>reject</invalid-values>
+              </range-element-index>
+              <range-element-index>
+                  <scalar-type>string</scalar-type>
+                  <namespace-uri>http://www.vlad.org/2010/Receipts/OrderEmail</namespace-uri>
+                  <localname>Type</localname>
+                  <collation>http://marklogic.com/collation/</collation>
+                  <range-value-positions>false</range-value-positions>
+                  <invalid-values>reject</invalid-values>
+              </range-element-index>
+          </range-element-indexes>
+          <range-element-attribute-indexes>
+              <range-element-attribute-index>
+                  <scalar-type>string</scalar-type>
+                  <parent-namespace-uri>http://www.vlad.org/2010/Receipts/PaperReceipt</parent-namespace-uri>
+                  <parent-localname>Category</parent-localname>
+                  <namespace-uri/>
+                  <localname>name</localname>
+                  <collation>http://marklogic.com/collation/</collation>
+                  <range-value-positions>false</range-value-positions>
+                  <invalid-values>ignore</invalid-values>
+              </range-element-attribute-index>
+              <range-element-attribute-index>
+                  <scalar-type>string</scalar-type>
+                  <parent-namespace-uri>http://www.vlad.org/2010/Receipts/PaperReceipt</parent-namespace-uri>
+                  <parent-localname>Receipt</parent-localname>
+                  <namespace-uri/>
+                  <localname>store</localname>
+                  <collation>http://marklogic.com/collation/</collation>
+                  <range-value-positions>false</range-value-positions>
+                  <invalid-values>reject</invalid-values>
+              </range-element-attribute-index>
+          </range-element-attribute-indexes>
+          <range-field-indexes>              <!--
+                      <range-field-index>
+                        <scalar-type>date</scalar-type>
+                        <field-name>sample</field-name>
+                        <collation/>
+                        <range-value-positions>false</range-value-positions>
+                      </range-field-index>
+              -->
+          </range-field-indexes>
+
+          <path-namespaces>
+<!--
+                      <path-namespace>
+                        <prefix>sample</prefix>
+                        <namespace-uri>http://marklogic.com/ns/sample</namespace-uri>
+                      </path-namespace>
+              -->
+          </path-namespaces>
+
+          <range-path-indexes>
+<!--
+                      <range-path-index>
+                        <scalar-type>string</scalar-type>
+                        <collation>http://marklogic.com/collation/codepoint</collation>
+                        <path-expression>/sample:root/sample:child</path-expression>
+                        <range-value-positions>false</range-value-positions>
+                        <invalid-values>reject</invalid-values>
+                      </range-path-index>
+              -->
+          </range-path-indexes>
+
+          <geospatial-element-indexes>
+<!--
+                      <geospatial-element-index>
+                        <namespace-uri>http://www.marklogic.com/ns/sample</namespace-uri>
+                        <localname>geo-element</localname>
+                        <coordinate-system>wgs84</coordinate-system>
+                        <point-format>point</point-format>
+                        <range-value-positions>false</range-value-positions>
+                        <invalid-values>reject</invalid-values>
+                      </geospatial-element-index>
+              -->
+          </geospatial-element-indexes>
+
+          <geospatial-element-attribute-pair-indexes>              <!--
+                      Sample for:
+                        <geo lat="37.237162" lon="-115.8099747" xmlns="http://marklogic.com/ns/sample"/>
+
+                      <geospatial-element-attribute-pair-index>
+                        <parent-namespace-uri>http://marklogic.com/ns/sample</parent-namespace-uri>
+                        <parent-localname>geo</parent-localname>
+                        <latitude-namespace-uri/>
+                        <latitude-localname>lat</latitude-localname>
+                        <longitude-namespace-uri/>
+                        <longitude-localname>lon</longitude-localname>
+                        <coordinate-system>wgs84</coordinate-system>
+                        <range-value-positions>false</range-value-positions>
+                      </geospatial-element-attribute-pair-index>
+              -->
+          </geospatial-element-attribute-pair-indexes>
+          <geospatial-element-pair-indexes>              <!--
+                      Sample for:
+                        <geo xmlns="http://marklogic.com/ns/sample">
+                          <lat>37.237162</lat>
+                          <lon>-115.8099747</lon>
+                        </geo>
+
+                      <geospatial-element-pair-index>
+                        <parent-namespace-uri>http://marklogic.com/ns/sample</parent-namespace-uri>
+                        <parent-localname>geo</parent-localname>
+                        <latitude-namespace-uri>http://marklogic.com/ns/sample</latitude-namespace-uri>
+                        <latitude-localname>lat</latitude-localname>
+                        <longitude-namespace-uri>http://marklogic.com/ns/sample</longitude-namespace-uri>
+                        <longitude-localname>lon</longitude-localname>
+                        <coordinate-system>wgs84</coordinate-system>
+                        <range-value-positions>true</range-value-positions>
+                      </geospatial-element-pair-index>
+              -->
+          </geospatial-element-pair-indexes>
+          <geospatial-element-child-indexes>              <!--
+                      Sample for:
+                        <geo xmlns="http://marklogic.com/ns/sample">
+                          <pos>37.237162,-115.8099747</pos>
+                        </geo>
+
+                      <geospatial-element-child-index>
+                        <parent-namespace-uri>http://marklogic.com/ns/sample</parent-namespace-uri>
+                        <parent-localname>geo</parent-localname>
+                        <namespace-uri>http://marklogic.com/ns/sample</namespace-uri>
+                        <localname>pos</localname>
+                        <coordinate-system>wgs84</coordinate-system>
+                        <point-format>point</point-format>
+                        <range-value-positions>false</range-value-positions>
+                      </geospatial-element-child-index>
+              -->
+          </geospatial-element-child-indexes>
+          <element-word-lexicons>              <!--
+                      <element-word-lexicon>
+                        <namespace-uri>http://www.marklogic.com/ns/sample</namespace-uri>
+                        <localname>sample-element</localname>
+                        <collation>http://marklogic.com/collation/</collation>
+                      </element-word-lexicon>
+              -->
+          </element-word-lexicons>
+          <element-attribute-word-lexicons>              <!--
+                      <element-attribute-word-lexicon>
+                        <parent-namespace-uri>http://www.marklogic.com/ns/sample</parent-namespace-uri>
+                        <parent-localname>sample-element</parent-localname>
+                        <namespace-uri/>
+                        <localname>sample-attribute</localname>
+                        <collation>http://marklogic.com/collation/</collation>
+                      </element-attribute-word-lexicon>
+              -->
+          </element-attribute-word-lexicons>
+      </database>
+
+<!--Create Application Modules Database-->
+    <database>
+      <database-name>@ml.modules-db</database-name>
+      <forests>
+        <forest-id name="@ml.modules-db"/>
+      </forests>
+      <stemmed-searches>off</stemmed-searches>
+      <word-searches>false</word-searches>
+      <word-positions>false</word-positions>
+      <fast-phrase-searches>false</fast-phrase-searches>
+      <fast-reverse-searches>false</fast-reverse-searches>
+      <fast-case-sensitive-searches>false</fast-case-sensitive-searches>
+      <fast-diacritic-sensitive-searches>false</fast-diacritic-sensitive-searches>
+      <fast-element-word-searches>false</fast-element-word-searches>
+      <element-word-positions>false</element-word-positions>
+      <fast-element-phrase-searches>false</fast-element-phrase-searches>
+      <element-value-positions>false</element-value-positions>
+      <attribute-value-positions>false</attribute-value-positions>
+      <three-character-searches>false</three-character-searches>
+      <three-character-word-positions>false</three-character-word-positions>
+      <fast-element-character-searches>false</fast-element-character-searches>
+      <trailing-wildcard-searches>false</trailing-wildcard-searches>
+      <trailing-wildcard-word-positions>false</trailing-wildcard-word-positions>
+      <fast-element-trailing-wildcard-searches>false</fast-element-trailing-wildcard-searches>
+      <word-lexicons/>
+      <two-character-searches>false</two-character-searches>
+      <one-character-searches>false</one-character-searches>
+      <uri-lexicon>true</uri-lexicon>
+      <collection-lexicon>false</collection-lexicon>
+      <directory-creation>automatic</directory-creation>
+      <maintain-last-modified>false</maintain-last-modified>
+    </database>
+    <!--Create Test Modules Database-->
+    @ml.test-modules-db-xml
+    <!--Create a Triggers Database-->
+    @ml.triggers-db-xml
+    @ml.schemas-db-xml
+  </databases>
+  <certificate xmlns="http://marklogic.com/xdmp/pki">
+    <name>@ml.ssl-certificate-template</name>
+    <countryName>@ml.ssl-certificate-countryName</countryName>
+    <stateOrProvinceName>@ml.ssl-certificate-stateOrProvinceName</stateOrProvinceName>
+    <localityName>@ml.ssl-certificate-localityName</localityName>
+    <organizationName>@ml.ssl-certificate-organizationName</organizationName>
+    <organizationalUnitName>@ml.ssl-certificate-organizationalUnitName</organizationalUnitName>
+    <emailAddress>@ml.ssl-certificate-emailAddress</emailAddress>
+  </certificate>
+  <roles xmlns="http://marklogic.com/xdmp/security">
+    <role>
+      <role-name>@ml.app-role</role-name>
+      <description>A role for users of the @ml.app-name application</description>
+      <role-names>
+      </role-names>
+      <permissions>
+        <permission>
+          <capability>execute</capability>
+          <role-name>@ml.app-role</role-name>
+        </permission>
+        <permission>
+          <capability>update</capability>
+          <role-name>@ml.app-role</role-name>
+        </permission>
+        <permission>
+          <capability>insert</capability>
+          <role-name>@ml.app-role</role-name>
+        </permission>
+        <permission>
+          <capability>read</capability>
+          <role-name>@ml.app-role</role-name>
+        </permission>
+      </permissions>
+      <collections>
+      </collections>
+      <privileges>
+        <privilege>
+          <privilege-name>xdmp:value</privilege-name>
+        </privilege>
+        <privilege>
+          <privilege-name>xdmp:add-response-header</privilege-name>
+        </privilege>
+        <privilege>
+          <privilege-name>xdmp:invoke</privilege-name>
+        </privilege>
+        <privilege>
+          <privilege-name>xdmp:with-namespaces</privilege-name>
+        </privilege>
+      </privileges>
+    </role>
+  </roles>
+  <users xmlns="http://marklogic.com/xdmp/security">
+    <user>
+      <user-name>@ml.app-name-user</user-name>
+      <description>A user for the @ml.app-name application</description>
+      <password>@ml.appuser-password</password>
+      <role-names>
+        <role-names>@ml.app-role</role-names>
+      </role-names>
+      <permissions/>
+      <collections/>
+    </user>
+  </users>
+  <amps xmlns="http://marklogic.com/xdmp/security">
+<!--
+  Sample amp. See the Understanding and Using Security Guide section 5.2 for
+  information about amps.
+  http://community.marklogic.com/pubs/5.0/books/security.pdf
+    <amp>
+      <namespace>http://marklogic.com/roxy</namespace>
+      <local-name>sample</local-name>
+      <doc-uri>/app/models/sample.xqy</doc-uri>
+      <db-name>@ml.app-modules-db</db-name>
+      <role-name>a-privileged-role</role-name>
+    </amp>
+-->
+  </amps>
+  <privileges xmlns="http://marklogic.com/xdmp/security">
+<!--
+    Sample execute privilege.
+    <privilege>
+      <privilege-name>my-action</privilege-name>
+      <action>http://marklogic.com/custom/privilege/my-action</action>
+      <kind>execute</kind>
+    </privilege>
+-->
+<!--
+    Sample URI privilege.
+    <privilege>
+      <privilege-name>users-uri</privilege-name>
+      <action>/users/</action>
+      <kind>uri</kind>
+    </privilege>
+-->
+  </privileges>
+</configuration>
