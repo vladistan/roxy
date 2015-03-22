@@ -2059,6 +2059,7 @@ declare function setup:configure-databases($import-config as element(configurati
   let $admin-config := setup:add-fragment-roots($admin-config, $database, $db-config)
   let $admin-config := setup:add-fragment-parents($admin-config, $database, $db-config)
   let $admin-config := setup:config-word-query($admin-config, $database, $db-config)
+  let $admin-config := setup:config-custom-word-query($admin-config, $database, $db-config)
   let $admin-config := setup:set-schema-database($admin-config, $db-config, $database)
   (:
     Changing the Security database is serious stuff. Roxy doesn't support this
@@ -2167,7 +2168,8 @@ declare function setup:add-fields(
   admin:database-add-field(
     setup:remove-existing-fields($admin-config, $database),
     $database,
-    for $field in $db-config/db:fields/db:field[db:field-name and fn:not(db:field-name = "")]
+    for $field in $db-config/db:fields/db:field[db:field-name and
+        fn:not(db:field-name = "")]
     return
       if ($field/db:field-path) then
         if (setup:at-least-version("7.0-1")) then
@@ -3206,6 +3208,26 @@ declare function setup:remove-existing-word-query-excluded-elements(
         $database,
         $element)),
   $admin-config
+};
+
+declare function setup:config-custom-word-query(
+        $admin-config as element(configuration),
+        $database as xs:unsignedLong,
+        $db-config as element(db:database)) as element(configuration)
+{
+   xdmp:set(
+      $admin-config,
+      admin:database-set-word-query-fast-case-sensitive-searches(
+         $admin-config,
+         $database,
+         fn:true())),
+   xdmp:set(
+      $admin-config,
+      admin:database-set-word-query-stemmed-searches(
+          $admin-config,
+          $database,
+          "decompounding")),
+   $admin-config
 };
 
 declare function setup:config-word-query(
