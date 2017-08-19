@@ -1,0 +1,4 @@
+OUTPUT_CONNECTION_STRING=xcc://xcc:Password1@taxestime.test:8116/
+INPUT_PACKAGE=documents-2014-ML8-000.zip
+ALLOW_EMPTY_METADATA=true
+
