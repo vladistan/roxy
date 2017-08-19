@@ -1461,6 +1461,7 @@ declare function setup:create-forests($import-config as element(configuration), 
     for $db-config in setup:get-databases-from-config($import-config)
     let $database-name := setup:get-database-name-from-database-config($db-config)
     let $forests-per-host as xs:int? := $db-config/db:forests-per-host
+    let $_ := xdmp:log(fn:concat("Create forests Databases: ", $database-name, " FPS: ", $forests-per-host))
     where fn:not($database-name = 'filesystem')
     return
       if (fn:exists($forests-per-host)) then
@@ -1507,7 +1508,6 @@ declare function setup:create-forests-from-config(
   let $replica-names as xs:string* := $forest-config/as:replica-names/as:replica-name[fn:string-length(fn:string(.)) > 0]
   let $replicas := $import-config/as:assignments/as:assignment[as:forest-name = $replica-names]
 
-  let $_ := setup:mark-old-replicas-for-delete( $forest-name )
   return
     setup:create-forest(
       $forest-name,
@@ -1560,6 +1560,7 @@ declare function setup:create-forests-from-count(
   let $replica-names as xs:string* := $forest-config/as:replica-names/as:replica-name[fn:string-length(fn:string(.)) > 0]
   let $replicas := $import-config/as:assignments/as:assignment[as:forest-name = $replica-names]
   let $_ := setup:mark-old-replicas-for-delete( $new-forest-name )
+  let $_ := xdmp:log(fn:concat("Create forests : ", $new-forest-name, " Host: ", $host, "Ddir", $data-directory ))  
   return
     setup:create-forest(
       $new-forest-name,
