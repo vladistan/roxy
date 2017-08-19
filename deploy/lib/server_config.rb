@@ -2614,6 +2614,9 @@ private
     }
 
     url = "#{@protocol}://#{@hostname}:#{@qconsole_port}/qconsole/endpoints/evaler.xqy?wsid=#{ws_id}&qid=#{q_id}&action=eval&querytype=xquery&dirty=true"
+    
+    File.open('query.txt', 'w') {|f| f.write(query) }
+    
     if db_id.present?
       url = url + "&dbid=#{db_id}"
       r = go(url, "post", headers, nil, query)
