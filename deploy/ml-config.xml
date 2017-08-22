@@ -34,7 +34,7 @@
     <!-- DAV access to DB -->
     <http-server>
       <http-server-name>TaxesTime-DAV</http-server-name>
-      <port>8103</port>
+      <port>8115</port>
       <webDAV>true</webDAV>
       <execute>false</execute>
       <database name="@ml.content-db"/>
@@ -45,7 +45,7 @@
   </http-server>
   <http-server>
       <http-server-name>TaxesTime-Test-DAV</http-server-name>
-      <port>8217</port>
+      <port>8215</port>
       <webDAV>true</webDAV>
       <execute>false</execute>
       <database name="@ml.test-content-db"/>
@@ -74,6 +74,7 @@
   </http-servers>
   <xdbc-servers xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://marklogic.com/xdmp/group" xsi:schemaLocation="http://marklogic.com/xdmp/group group.xsd">
     @ml.xdbc-server
+    @ml.xdbc-test-server
   </xdbc-servers>
   <odbc-servers xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://marklogic.com/xdmp/group" xsi:schemaLocation="http://marklogic.com/xdmp/group group.xsd">
     @ml.odbc-server
@@ -102,7 +103,7 @@
 
     <!-- Taxes Time DB -->
       <database>
-          <database-name>TaxesDB</database-name>
+          <database-name>@ml.content-db</database-name>
           <forests-per-host>@ml.content-forests-per-host</forests-per-host>
           @ml.schemas-mapping
           @ml.triggers-mapping
@@ -116,6 +117,7 @@
           <maintain-last-modified>true</maintain-last-modified>
           <stemmed-searches>decompounding</stemmed-searches>
           <word-positions>true</word-positions>
+          <word-searches>true</word-searches>
           <element-word-positions>true</element-word-positions>
           <element-value-positions>true</element-value-positions>
           <field-value-searches>true</field-value-searches>
@@ -440,6 +442,8 @@
           </element-attribute-word-lexicons>
       </database>
 
+     @ml.test-content-db-xml
+     
 <!--Create Application Modules Database-->
     <database>
       <database-name>@ml.modules-db</database-name>
@@ -539,6 +543,23 @@
       </role-names>
       <permissions/>
       <collections/>
+    </user>
+    <user>
+      <user-name>xcc</user-name>
+      <description>XCC User for Roxy</description>
+      <password>@ml.appuser-password</password>
+      <role-names>
+          <role-name>admin-builtins</role-name>
+          <role-name>admin-module-internal</role-name>
+          <role-name>alert-admin</role-name>
+          <role-name>admin</role-name>
+      </role-names>
+      <permissions>
+          <permission>
+              <capability>read</capability>
+              <role-name>admin</role-name>
+          </permission>
+      </permissions>
     </user>
   </users>
   <amps xmlns="http://marklogic.com/xdmp/security">
