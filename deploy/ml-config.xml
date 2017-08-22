@@ -54,6 +54,17 @@
       <compute-content-length>false</compute-content-length>
       <!-- <ssl-certificate-template>@ml.ssl-certificate-template</ssl-certificate-template> -->
   </http-server>
+  <http-server>
+      <http-server-name>TaxesTime-Search2-DAV</http-server-name>
+      <port>8205</port>
+      <webDAV>true</webDAV>
+      <execute>false</execute>
+      <database name="Search2-modules"/>
+      <authentication>@ml.authentication-method</authentication>
+      <default-user name="@ml.default-user"/>
+      <compute-content-length>false</compute-content-length>
+      <!-- <ssl-certificate-template>@ml.ssl-certificate-template</ssl-certificate-template> -->
+  </http-server>
 
     @ml.test-appserver
 
@@ -68,6 +79,21 @@
       <url-rewriter>rewrite.xqy</url-rewriter>
       <error-handler>error.xqy</error-handler>
       <rewrite-resolves-globally>@ml.rewrite-resolves-globally</rewrite-resolves-globally>
+      <!-- <ssl-certificate-template>@ml.ssl-certificate-template</ssl-certificate-template> -->
+  </http-server>
+  
+  <http-server>
+      <http-server-name>TaxesTime-Search-2</http-server-name>
+      <port>8005</port>
+      <database name="@ml.content-db"/>
+      <modules>Search2-modules</modules>
+      <authentication>@ml.authentication-method</authentication>
+      <default-user name="@ml.default-user"/>
+      <log-errors>true</log-errors>
+      <default-error-format>json</default-error-format>
+      <error-handler>/MarkLogic/rest-api/error-handler.xqy</error-handler>
+      <url-rewriter>/MarkLogic/rest-api/rewriter.xml</url-rewriter>
+      <rewrite-resolves-globally>true</rewrite-resolves-globally>
       <!-- <ssl-certificate-template>@ml.ssl-certificate-template</ssl-certificate-template> -->
   </http-server>
 
@@ -89,6 +115,9 @@
     @ml.test-modules-db-assignment
     <assignment>
       <forest-name>@ml.modules-db</forest-name>
+    </assignment>
+    <assignment>
+      <forest-name>Search2-modules-1</forest-name>
     </assignment>
     @ml.schemas-assignment
     @ml.triggers-assignment
@@ -476,6 +505,33 @@
       <directory-creation>automatic</directory-creation>
       <maintain-last-modified>false</maintain-last-modified>
     </database>
+    
+<!-- Create Search App Modules DB -->
+    <database>
+      <database-name>Search2-modules</database-name>
+      <forests>
+        <forest-id name="Search2-modules-1"/>
+      </forests>
+      <word-searches>false</word-searches>
+      <word-positions>false</word-positions>
+      <fast-reverse-searches>false</fast-reverse-searches>
+      <element-value-positions>false</element-value-positions>
+      <attribute-value-positions>false</attribute-value-positions>
+      <three-character-searches>false</three-character-searches>
+      <three-character-word-positions>false</three-character-word-positions>
+      <fast-element-character-searches>false</fast-element-character-searches>
+      <trailing-wildcard-searches>false</trailing-wildcard-searches>
+      <trailing-wildcard-word-positions>false</trailing-wildcard-word-positions>
+      <fast-element-trailing-wildcard-searches>false</fast-element-trailing-wildcard-searches>
+      <word-lexicons/>
+      <two-character-searches>false</two-character-searches>
+      <one-character-searches>false</one-character-searches>
+      <uri-lexicon>true</uri-lexicon>
+      <collection-lexicon>false</collection-lexicon>
+      <directory-creation>automatic</directory-creation>
+      <maintain-last-modified>true</maintain-last-modified>
+    </database>
+        
     <!--Create Test Modules Database-->
     @ml.test-modules-db-xml
     <!--Create a Triggers Database-->
