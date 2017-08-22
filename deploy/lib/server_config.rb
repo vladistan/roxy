@@ -3040,8 +3040,7 @@ private
 
       # Build the test appserver and db if it is provided
       if @properties['ml.test-content-db'].present? &&
-         @properties['ml.test-port'].present? &&
-         @environment != "prod"
+         @properties['ml.test-port'].present? 
 
         config.gsub!("@ml.test-content-db-xml", test_content_db_xml)
         config.gsub!("@ml.test-content-db-assignment", test_content_db_assignment)
