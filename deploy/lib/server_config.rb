@@ -2525,6 +2525,9 @@ private
 
     url = "#{@protocol}://#{@hostname}:#{@qconsole_port}/qconsole/endpoints/workspaces.xqy"
 
+    @logger.info "Posting to: #{url}"
+
+
     # weird stuff on windows is fixed by {} for params
     r = go(url, "post", {}, {})
     return nil unless r.code.to_i == 200
@@ -2603,7 +2606,9 @@ private
       sid = get_sid("Manage")
     end
 
+    logger.warn "Creating Workspace"
     ws_id, q_id = create_roxy_workspace()
+    logger.warn "Workspace Done"
     raise ExitException.new("Can't create Roxy workspace in QConsole") unless ws_id && q_id
 
     db_id = get_any_db_id if db_id.nil? && sid.nil?

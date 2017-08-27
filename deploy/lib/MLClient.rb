@@ -102,6 +102,7 @@ class MLClient
     raise ExitException.new("Don't combine params and body. One or the other please") if (params && body)
 
     if (params)
+      File.open('query.txt', 'w') {|f| f.write(params[:xquery]) }
       request_params[:request].set_form_data(params)
     end
 
