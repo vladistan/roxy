@@ -11,3 +11,4 @@ Thumbs.db
 /.idea/
 *.iml
 simplelogger-*.log.lck
+/query.txt
