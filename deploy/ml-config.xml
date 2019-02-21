@@ -81,7 +81,7 @@
       <rewrite-resolves-globally>@ml.rewrite-resolves-globally</rewrite-resolves-globally>
       <!-- <ssl-certificate-template>@ml.ssl-certificate-template</ssl-certificate-template> -->
   </http-server>
-  
+
   <http-server>
       <http-server-name>TaxesTime-Search-2</http-server-name>
       <port>8005</port>
@@ -142,8 +142,6 @@
           </forests>
           <uri-lexicon>true</uri-lexicon>
           <collection-lexicon>false</collection-lexicon>
-          <directory-creation>automatic</directory-creation>
-          <maintain-last-modified>true</maintain-last-modified>
           <stemmed-searches>decompounding</stemmed-searches>
           <word-positions>true</word-positions>
           <word-searches>true</word-searches>
@@ -153,6 +151,8 @@
           <field-value-positions>true</field-value-positions>
           <three-character-searches>true</three-character-searches>
           <three-character-word-positions>true</three-character-word-positions>
+      	  <directory-creation>automatic</directory-creation>
+      	  <maintain-last-modified>true</maintain-last-modified>
           <inherit-permissions>true</inherit-permissions>
           <inherit-collections>true</inherit-collections>
           <inherit-quality>true</inherit-quality>
@@ -472,7 +472,7 @@
       </database>
 
      @ml.test-content-db-xml
-     
+
 <!--Create Application Modules Database-->
     <database>
       <database-name>@ml.modules-db</database-name>
@@ -505,7 +505,7 @@
       <directory-creation>automatic</directory-creation>
       <maintain-last-modified>false</maintain-last-modified>
     </database>
-    
+
 <!-- Create Search App Modules DB -->
     <database>
       <database-name>Search2-modules</database-name>
@@ -531,7 +531,7 @@
       <directory-creation>automatic</directory-creation>
       <maintain-last-modified>true</maintain-last-modified>
     </database>
-        
+
     <!--Create Test Modules Database-->
     @ml.test-modules-db-xml
     <!--Create a Triggers Database-->
